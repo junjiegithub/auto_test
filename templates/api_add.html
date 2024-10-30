@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新增API用例</title>
+    <style>
+        /* 页面整体布局和样式 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 10px; /* 缩小页面边距 */
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            font-weight: normal;
+            margin-bottom: 10px; /* 减少标题下方间距 */
+            font-size: 20px; /* 缩小标题字体 */
+        }
+
+        /* 表单容器 */
+        .form-container {
+            max-width: 800px; /* 增加宽度减少高度 */
+            margin: 0 auto;
+            background-color: white;
+            padding: 15px; /* 缩小内边距 */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* 标签和输入框样式 */
+        label {
+            display: inline-block;
+            margin-bottom: 5px; /* 减少标签间距 */
+            font-weight: bold;
+            color: #555;
+            width: 150px; /* 标签宽度 */
+            font-size: 14px; /* 缩小字体 */
+        }
+
+        input[type="text"], input[type="number"] {
+            width: calc(100% - 160px); /* 保持宽度与标签对齐 */
+            padding: 6px; /* 减少内边距 */
+            margin-bottom: 10px; /* 缩小输入框间距 */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px; /* 缩小字体 */
+            box-sizing: border-box;
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        /* 按钮样式 */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px; /* 缩小按钮内边距 */
+            cursor: pointer;
+            font-size: 14px; /* 缩小按钮字体 */
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 10px; /* 减少按钮顶部间距 */
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* 表单排版 */
+        .form-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px; /* 减少组之间的间距 */
+        }
+
+        /* 返回用例列表链接样式 */
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px; /* 缩小返回链接的顶部间距 */
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>新增API用例</h1>
+    <div class="form-container">
+        <form action="{{ url_for('api_add') }}" method="POST">
+            <div class="form-group">
+                <label for="app">业务应用：</label>
+                <input type="text" id="app" name="app" value="中台ERP管理系统" required>
+            </div>
+
+            <div class="form-group">
+                <label for="module">模块：</label>
+                <input type="text" id="module" name="module" required>
+            </div>
+
+            <div class="form-group">
+                <label for="title">用例名称：</label>
+                <input type="text" id="title" name="title" required>
+            </div>
+
+            <div class="form-group">
+                <label for="method">Http提交方法：</label>
+                <input type="text" id="method" name="method" value="POST" required>
+            </div>
+
+            <div class="form-group">
+                <label for="url">接口URL：</label>
+                <input type="text" id="url" name="url" required>
+            </div>
+
+            <div class="form-group">
+                <label for="run">是否运行：</label>
+                <input type="text" id="run" name="run" value="是" required>
+            </div>
+
+            <div class="form-group">
+                <label for="headers">请求头：</label>
+                <input type="text" id="headers" value='{"content-type":"application/json"}' name="headers" >
+            </div>
+
+            <div class="form-group">
+                <label for="pre_case_id">前置用例ID：</label>
+                <input type="text" id="pre_case_id" value="无" name="pre_case_id">
+            </div>
+
+            <div class="form-group">
+                <label for="pre_fields">前置字段：</label>
+                <input type="text" id="pre_fields" value="无" name="pre_fields">
+            </div>
+
+            <div class="form-group">
+                <label for="request_body">请求内容：</label>
+                <input type="text" id="request_body" name="request_body" required>
+            </div>
+
+            <div class="form-group">
+                <label for="expect_result">预期结果：</label>
+                <input type="text" id="expect_result" name="expect_result" value="200">
+            </div>
+
+            <div class="form-group">
+                <label for="assert_type">断言类型：</label>
+                <input type="text" id="assert_type" name="assert_type" value="默认">
+            </div>
+
+            <div class="form-group">
+                <label for="pass">是否通过：</label>
+                <input type="text" id="pass" name="pass" value="待执行">
+            </div>
+
+            <div class="form-group">
+                <label for="msg">额外描述：</label>
+                <input type="text" id="msg" name="msg" value="无">
+            </div>
+
+            <div class="form-group">
+                <label for="remark">备注：</label>
+                <input type="text" id="remark" name="remark" value="无">
+            </div>
+
+            <button type="submit">提交</button>
+        </form>
+
+        <a class="back-link" href="{{ url_for('api_list') }}">返回用例列表</a>
+    </div>
+</body>
+</html>

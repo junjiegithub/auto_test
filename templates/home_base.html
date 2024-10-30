@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 自 动 化 测 试</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: #f5f6fa;
+        }
+
+        /* 侧边栏样式 */
+        .sidebar {
+            width: 250px;
+            background-color: #2d3a4b;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .sidebar h2 {
+            color: #fff;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar ul li {
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #3b4b5b;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar ul li:hover {
+            background-color: #495b6d;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* 子菜单样式 */
+        .submenu {
+            display: none;
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .submenu li {
+            padding: 10px;
+            background-color: #495b6d;
+            margin: 5px 0;
+            border-radius: 8px;
+        }
+
+        .submenu li:hover {
+            background-color: #5a6b7d;
+        }
+
+        .submenu li a {
+            color: white;
+            text-decoration: none;
+        }
+
+        /* 内容区域 */
+        .content {
+            flex-grow: 1;
+            padding: 20px;
+        }
+
+        .header {
+            background-color: #fff;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 24px;
+        }
+
+        .header .user-info {
+            color: #333;
+        }
+
+        /* 主仪表盘内容 */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .dashboard-item {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .dashboard-item:hover {
+            background-color: #e0e5ec; /* 鼠标悬停时背景色 */
+        }
+
+        .dashboard-item h3 {
+            margin-bottom: 10px;
+        }
+
+        .dashboard-item p {
+            font-size: 18px;
+            color: #555;
+        }
+
+        /* 特殊样式为带有链接的项目 */
+        .dashboard-item a {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            font-weight: bold;
+            font-size: 18px;
+            padding: 20px;
+            background-color: #f0e68c;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .dashboard-item a:hover {
+            background-color: #d4af37; /* 鼠标悬停时的背景颜色 */
+            color: #fff; /* 鼠标悬停时字体颜色 */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 侧边栏 -->
+    <div class="sidebar">
+        <div>
+            <h2>系统菜单</h2>
+            <ul>
+                <li><a href="#dashboard" onclick="loadContent('dashboard')">工作台</a></li>
+                <li onclick="toggleSubmenu()">财务系统</li>
+                <ul class="submenu">
+                    <li><a href="#financial-closing" onclick="loadContent('financial-closing')">财务月结</a></li>
+                    <li><a href="#financial-report" onclick="loadContent('financial-report')">财务报表</a></li>
+                </ul>
+                <li><a href="#api-test" onclick="loadContent('api-test')">接口测试</a></li>
+                <li><a href="#ui-test" onclick="loadContent('ui-test')">UI 测试</a></li>
+                <li><a href="#performance-test" onclick="loadContent('performance-test')">性能测试</a></li>
+                <li><a href="#project-settings" onclick="loadContent('project-settings')">项目设置</a></li>
+                <li><a href="#system-settings" onclick="loadContent('system-settings')">系统设置</a></li>
+            </ul>
+        </div>
+        <div>
+            <p><a href="{{ url_for('home') }}" style="color: #f0e68c; text-decoration: underline; font-size: 16px; font-weight: bold; transition: color 0.3s ease, text-decoration-color 0.3s ease;"
+               onmouseover="this.style.color='#d4af37'; this.style.textDecorationColor='#d4af37';"
+               onmouseout="this.style.color='#f0e68c'; this.style.textDecorationColor='#f0e68c';">
+               © 2024 自动化测试
+            </a></p>
+        </div>
+    </div>
+
+    <!-- 内容区域 -->
+    <div class="content">
+        <!-- 顶部标题栏 -->
+        <div class="header">
+            <h1>欢迎回来，管理员</h1>
+            <div class="user-info">
+                <p>管理员 | 退出</p>
+            </div>
+        </div>
+
+        <!-- 仪表盘内容 -->
+        <div id="main-dashboard" class="dashboard">
+            <!-- Default content including ERP database -->
+            <div class="dashboard-item">
+                <h3>工作台</h3>
+                <p>当前待办: 5</p>
+            </div>
+            <div class="dashboard-item">
+
+                <a href="{{ url_for('api_list') }}">接口测试用例管理列表</a>
+<!--                <h3>接口测试</h3>-->
+<!--                <p>测试计划: 2</p>-->
+            </div>
+            <div class="dashboard-item">
+                <h3>UI 测试</h3>
+                <p>用例数: 8</p>
+            </div>
+            <div class="dashboard-item">
+                <h3>性能测试</h3>
+                <p>进行中: 1</p>
+            </div>
+            <div class="dashboard-item">
+                <h3>项目设置</h3>
+                <p>项目总数: 3</p>
+            </div>
+            <div class="dashboard-item">
+                <h3>系统设置</h3>
+                <p>用户数: 10</p>
+            </div>
+            <!-- ERP数据库部分 -->
+            <div class="dashboard-item">
+                <a href="{{ url_for('mysql_exec') }}">ERP数据库 - 线上数据库执行(谨慎)</a>
+            </div>
+            <div class="dashboard-item">
+                <a href="{{ url_for('report') }}">测试用例自动巡检报表（每小时更新）</a>
+            </div>
+        </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleSubmenu() {
+            const submenu = document.querySelector('.submenu');
+            submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // Function to load content based on the selected menu
+        function loadContent(page) {
+            const dashboard = document.getElementById('main-dashboard');
+            dashboard.innerHTML = ''; // Clear the current content
+
+            // Content for different pages
+            const contentData = {
+                'dashboard': [
+                    { title: '工作台', text: '当前待办: 5' },
+                    { title: '接口测试', text: '测试计划: 2' },
+                    { title: 'UI 测试', text: '用例数: 8' },
+                    { title: '性能测试', text: '进行中: 1' },
+                    { title: '项目设置', text: '项目总数: 4' },
+                    { title: '系统设置', text: '用户数: 10' },
+                    { title: 'ERP数据库', text: '线上数据库执行(谨慎)', link: "{{ url_for('mysql_exec') }}" }
+                ],
+                'financial-closing': [
+                    { title: '订单与退款', text: '月结数据: 9月份', link: "{{ url_for('index') }}" },
+                    { title: '财务月结', text: '月结数据: 100' },
+                    { title: '月结记录', text: '记录数: 12' },
+                    { title: '账单统计', text: '总额: ¥50000' }
+                ],
+                'financial-report': [
+                    { title: '财务报表', text: '生成日期: 2024-09' },
+                    { title: '收入', text: '本月收入: ¥100000' },
+                    { title: '支出', text: '本月支出: ¥80000' }
+                ],
+                'api-test': [
+                    { title: 'API 测试', text: '待测接口: 15' },
+                    { title: '通过率', text: '通过率: 90%' },
+                ],
+                'ui-test': [
+                    { title: 'UI 测试', text: '测试用例: 50' },
+                    { title: '通过用例', text: '通过率: 80%' },
+                ],
+                'performance-test': [
+                    { title: '性能测试', text: '当前任务: 3' },
+                    { title: '系统稳定性', text: '平均响应时间: 200ms' },
+                ],
+                'project-settings': [
+                    { title: '项目设置', text: '当前项目数: 4' },
+                    { title: '项目状态', text: '活跃项目: 3' },
+                ],
+                'system-settings': [
+                    { title: '系统设置', text: '总用户数: 100' },
+                    { title: '活跃用户', text: '活跃用户数: 80' },
+                ]
+            };
+
+            // Populate the dashboard with the corresponding content
+            const selectedContent = contentData[page];
+            selectedContent.forEach(item => {
+                const div = document.createElement('div');
+                div.classList.add('dashboard-item');
+
+                if (item.link) {
+                    div.innerHTML = `<a href="${item.link}">${item.title} - ${item.text}</a>`;
+                } else {
+                    div.innerHTML = `<h3>${item.title}</h3><p>${item.text}</p>`;
+                }
+
+                dashboard.appendChild(div);
+            });
+        }
+    </script>
+
+</body>
+</html>
+

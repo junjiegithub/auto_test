@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑API案例</title>
+    <style>
+
+        /* 页面整体字体和布局 */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 10px; /* 缩小页面边距 */
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            font-weight: normal;
+            margin-bottom: 15px; /* 减少标题下方间距 */
+        }
+
+        /* 表单容器居中 */
+        .form-container {
+            max-width: 1000px; /* 更大宽度，减少高度 */
+            margin: 0 auto;
+            background-color: white;
+            padding: 15px; /* 缩小内边距 */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* 输入框和标签样式 */
+        label {
+            display: inline-block;
+            margin-bottom: 5px; /* 减少标签下方间距 */
+            font-weight: bold;
+            color: #555;
+            width: 150px; /* 让标签和输入框并排 */
+        }
+
+        input[type="text"] {
+            width: calc(100% - 160px); /* 调整输入框宽度，避免换行 */
+            padding: 6px; /* 减少输入框内边距 */
+            margin-bottom: 10px; /* 减少输入框间距 */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px; /* 缩小字体 */
+        }
+
+        input[type="text"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+
+        /* 按钮样式 */
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px; /* 缩小按钮内边距 */
+            cursor: pointer;
+            font-size: 14px; /* 缩小按钮字体 */
+            border-radius: 4px;
+            width: 100%;
+            margin-top: 10px; /* 减少按钮顶部间距 */
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+        /* 返回用例列表链接样式 */
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 10px; /* 缩小返回链接的顶部间距 */
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        /* 表单项目排版 */
+        .form-group {
+            display: flex; /* 横向排列标签和输入框 */
+            align-items: center;
+            margin-bottom: 10px; /* 减少组之间的间距 */
+        }
+
+    </style>
+</head>
+<body>
+    <h1>编辑API案例</h1>
+    <div class="form-container">
+        <form method="POST">
+            <div class="form-group">
+                <label for="app">应用:</label>
+                <input type="text" name="app" id="app" value="{{ api_case[1] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="module">模块:</label>
+                <input type="text" name="module" id="module" value="{{ api_case[2] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="title">用例名称:</label>
+                <input type="text" name="title" id="title" value="{{ api_case[3] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="method">请求方法:</label>
+                <input type="text" name="method" id="method" value="{{ api_case[4] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="url">接口URL:</label>
+                <input type="text" name="url" id="url" value="{{ api_case[5] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="run">是否运行:</label>
+                <input type="text" name="run" id="run" value="{{ api_case[6] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="headers">请求头:</label>
+                <input type="text" name="headers" id="headers" value="{{ api_case[7] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="pre_case_id">前置用例ID:</label>
+                <input type="text" name="pre_case_id" id="pre_case_id" value="{{ api_case[8] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="pre_fields">前置字段:</label>
+                <input type="text" name="pre_fields" id="pre_fields" value="{{ api_case[9] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="request_body">请求内容:</label>
+                <input type="text" name="request_body" id="request_body" value="{{ api_case[10] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="expect_result">预期结果:</label>
+                <input type="text" name="expect_result" id="expect_result" value="{{ api_case[11] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="assert_type">断言类型:</label>
+                <input type="text" name="assert_type" id="assert_type" value="{{ api_case[12] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="pass">是否通过:</label>
+                <input type="text" name="pass" id="pass" value="{{ api_case[13] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="msg">消息:</label>
+                <input type="text" name="msg" id="msg" value="{{ api_case[14] }}">
+            </div>
+
+            <div class="form-group">
+                <label for="remark">备注:</label>
+                <input type="text" name="remark" id="remark" value="{{ api_case[18] }}">
+            </div>
+
+            <button type="submit">保存</button>
+        </form>
+        <a class="back-link" href="{{ url_for('api_list') }}">返回用例列表</a>
+    </div>
+</body>
+</html>

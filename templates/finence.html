@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自动化测试系统</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background-color: #f0f4f8;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #4CAF50;
+            margin-top: 30px;
+        }
+        h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin: 40px 0 20px;
+            text-align: center;
+        }
+        h4 {
+            text-align: center;
+            color: #666;
+            font-weight: normal;
+            margin-bottom: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 50px;
+        }
+        form {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        form input[type="text"] {
+            width: 80%;
+            max-width: 600px;
+            padding: 15px;
+            font-size: 18px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+            transition: border-color 0.3s ease;
+        }
+        form input[type="text"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+        form input[type="submit"] {
+            font-size: 18px;
+            padding: 10px 30px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+        }
+        form input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        a {
+            color: #007BFF;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .note {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 1rem;
+            color: #888;
+        }
+
+        /* Loading Overlay Styles */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            visibility: hidden;
+        }
+
+        .loading-overlay.active {
+            visibility: visible;
+        }
+
+        .loading-spinner {
+            border: 8px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 8px solid #4CAF50;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <h1>
+    <a href="{{ url_for('home_base') }}"
+       style="color: inherit; text-decoration: underline; font-weight: bold;">
+       财 务 月 结
+    </a>
+    </h1>
+
+    <div class="container">
+        <h3>1. 根据结算报告补偿结算 B2C 销售订单，
+            <a href="http://10.0.1.233/%E7%BB%93%E7%AE%97%E6%8A%A5%E5%91%8A%E6%9B%BF%E6%8D%A2%E9%87%91%E8%9E%8D%E6%95%B0%E6%8D%AE/index.html#id=qgjmwu&p=%E4%BA%9A%E9%A9%AC%E9%80%8A%E8%AE%A2%E5%8D%95%E7%BB%93%E7%AE%97&g=1" target="_blank">需求地址</a>
+        </h3>
+        <h4>请输入需要补偿生成B2C结算的平台订单号，输入的格式为：'114-0560035-7329062','114-7967327-0381856','028-7649430-5305164'</h4>
+        <form method="POST" action="/fin_b2c">
+            <input type="text" name="input_list1" placeholder="用逗号分隔的值">
+            <input type="submit" value="提交">
+        </form>
+    </div>
+
+    <div class="container">
+        <h3>2. 根据结算报告补偿生成 B2C 退款订单，
+            <a href="http://10.0.1.23:9/%E7%BB%93%E7%AE%97%E6%8A%A5%E5%91%8A%E6%9B%BF%E6%8D%A2%E9%87%91%E8%9E%8D%E6%95%B0%E6%8D%AE/index.html#id=42sxvu&p=%E9%80%80%E6%AC%BE%E5%8D%95%E7%94%9F%E6%88%90&g=1" target="_blank">需求地址</a>
+        </h3>
+        <h4>请输入需要补偿生成B2C退款的平台订单号，输入的格式为：'114-0560035-7329062','114-7967327-0381856','028-7649430-5305164'</h4>
+        <form method="POST" action="/process">
+            <input type="text" name="input_list" placeholder="用逗号分隔的值">
+            <input type="submit" value="提交">
+        </form>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading-overlay">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <div class="note">
+        &copy; 2024 自动化测试系统
+    </div>
+
+    <script>
+        const forms = document.querySelectorAll('form');
+        const loadingOverlay = document.getElementById('loading-overlay');
+
+        forms.forEach(form => {
+            form.addEventListener('submit', function (e) {
+                // 显示加载指示器
+                loadingOverlay.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

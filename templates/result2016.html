@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL 查询结果</title>
+    <style>
+        /* 基本页面设置 */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(120deg, #a8e063, #56ab2f); /* 调整为绿色系渐变 */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        h1, h2, h3 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* 主容器 */
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            width: 100%;
+            box-sizing: border-box;
+            overflow-x: auto;
+        }
+
+        a, button {
+            display: inline-block;
+            text-decoration: none;
+            background-color: #56ab2f;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        a:hover, button:hover {
+            background-color: #a8e063;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+
+        td {
+            background-color: #fff;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f9f9f9;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>SQL 执行详情</h1>
+        <a href="/home/mysql">返回</a>
+
+        <h2>执行的 SQL:</h2>
+        <pre>{{ executed_sql }}</pre>
+
+        <!-- 显示 SELECT 查询结果 -->
+        {% if results %}
+            {% for result in results %}
+                {% if result.columns %}
+                <h3>查询结果:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            {% for column in result.columns %}
+                            <th>{{ column }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in result.rows %}
+                        <tr>
+                            {% for col in row %}
+                            <td>{{ col }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <p style="text-align: center;">未找到结果。</p>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center;">没有查询到任何结果。</p>
+        {% endif %}
+
+        <!-- 显示非查询语句的结果 -->
+        <h2>SQL 执行结果:</h2>
+        {% if non_select_results %}
+            {% for msg in non_select_results %}
+                <p style="text-align: center;">{{ msg }}</p>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center;">没有执行非查询语句。</p>
+        {% endif %}
+
+        <br>
+        <!-- 用户触发回滚按钮 -->
+        <form action="/home/mysql/rollback" method="POST">
+            <input type="hidden" name="rollback_sql" value="{{ rollback_sql }}">
+            <button type="submit">回滚更改</button>
+        </form>
+
+        <a href="/home/mysql">返回</a>
+    </div>
+</body>
+</html>
+

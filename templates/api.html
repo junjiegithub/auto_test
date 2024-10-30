@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>接口测试用例管理列表</title>
+    <style>
+        /* 全局样式 */
+        body {
+            font-family: 'Arial', sans-serif;
+            transform: scale(0.95);
+            transform-origin: top left;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #4CAF50;
+            font-weight: normal;
+        }
+
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* 按钮样式 */
+        button, .action-buttons a, .action-buttons label {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: inline-block;
+            text-align: center;
+        }
+
+        button:hover, .action-buttons a:hover, .action-buttons label:hover {
+            background-color: #45a049;
+        }
+
+        /* 文件输入按钮样式隐藏 */
+        .action-buttons input[type="file"] {
+            display: none;
+        }
+
+        /* 表格按钮样式 */
+        .edit-btn, .delete-btn {
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            display: inline-block;
+            margin: 2px;
+        }
+
+        .edit-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #d32f2f;
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+            background-color: white;
+            table-layout: fixed;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* 列宽调整 */
+        .id-column {
+            width: 50px;
+        }
+
+        .app-column {
+            width: 180px;
+        }
+
+        .module-column {
+            width: 50px;
+        }
+
+        .url-column {
+            width: 400px;
+        }
+
+        .request-column {
+            width: 250px;
+        }
+
+        .status-column {
+            width: 100px;
+        }
+
+        .action-column {
+            width: 80px;
+            text-align: center;
+        }
+
+        /* 删除按钮和编辑按钮并排放置 */
+        form {
+            display: inline-block;
+        }
+
+        /* 搜索表单布局优化，不影响表格 */
+        .search-form-container {
+            margin-bottom: 20px;
+        }
+
+        .search-form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: space-between;
+        }
+
+        .search-form div {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .search-form label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            display: block;
+        }
+
+        .search-form input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .search-form button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .search-form button:hover {
+            background-color: #45a049;
+        }
+
+        /* 分页导航样式 */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .pagination a {
+            margin: 0 5px;
+            padding: 8px 12px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .pagination a:hover {
+            background-color: #45a049;
+        }
+
+        .pagination span {
+            margin: 0 5px;
+        }
+
+        /* flash 消息样式 */
+        .flashes {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .flashes li {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+
+        .flashes li.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .flashes li.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* 请求内容列样式，初始高度限制并隐藏溢出 */
+        .request-content {
+            max-height: 50px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .request-content.expanded {
+            max-height: none;
+        }
+
+        /* 展开查看更多按钮 */
+        .show-more {
+            color: #4CAF50;
+            text-decoration: underline;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .show-more:hover {
+            color: #45a049;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>接口测试用例管理列表</h1>
+
+    <!-- 搜索表单 -->
+    <div class="search-form-container">
+        <form class="search-form" action="{{ url_for('api_list') }}" method="GET">
+            <div>
+                <label for="search_app">应用:</label>
+                <input type="text" name="search_app" id="search_app" value="{{ search_app }}">
+            </div>
+            <div>
+                <label for="search_module">模块:</label>
+                <input type="text" name="search_module" id="search_module" value="{{ search_module }}">
+            </div>
+            <div>
+                <label for="search_title">用例名称:</label>
+                <input type="text" name="search_title" id="search_title" value="{{ search_title }}">
+            </div>
+            <div>
+                <label for="search_pass">是否通过:</label>
+                <input type="text" name="search_pass" id="search_pass" value="{{ search_pass }}">
+            </div>
+            <div>
+                <label for="search_url">接口URL:</label>
+                <input type="text" name="search_url" id="search_url" value="{{ search_url }}">
+            </div>
+            <div>
+                <label for="search_creat">创建人:</label>
+                <input type="text" name="search_creat" id="search_creat" value="{{ search_creat }}">
+            </div>
+            <button type="submit">搜索</button>
+        </form>
+    </div>
+
+    <!-- 按钮组 -->
+    <div class="action-buttons">
+        <a href="{{ url_for('api_add') }}">添加新案例</a>
+        <form action="{{ url_for('api_import') }}" method="POST" enctype="multipart/form-data">
+            <label for="file-upload" class="import-btn">批量导入</label>
+            <input type="file" id="file-upload" name="file" accept=".xlsx" onchange="this.form.submit()">
+        </form>
+        <button id="batch-execute-btn" class="execute-btn">批量执行测试</button>
+        <!-- 新增按钮 -->
+        <a href="{{ url_for('report') }}" class="report-btn">测试用例自动巡检报表（每小时更新）</a>
+        <a href="{{ url_for('home_base') }}" class="return-btn">返回首页</a>
+    </div>
+
+    <table>
+        <tr>
+            <th class="id-column">ID</th>
+            <th class="app-column">应用</th>
+            <th class="module-column">模块</th>
+            <th class="status-column">用例名称</th>
+            <th width="35px">请求方法</th>
+            <th class="url-column">接口URL</th>
+            <th width="35px">是否运行</th>
+            <th width="200px">请求头</th>
+            <th width="35px">前置用例ID</th>
+            <th width="35px">前置字段</th>
+            <th class="request-column">请求内容</th>
+            <th width="35px">预期结果</th>
+            <th width="35px">断言类型</th>
+            <th class="status-column">是否通过</th>
+            <th class="status-column">响应信息</th>
+            <th width="60px">更新时间</th>
+            <th width="60px">接口响应时间</th>
+            <th width="60px">创建时间</th>
+            <th width="100px">创建人</th>
+            <th width="50px">更新人</th>
+            <th class="action-column">操作</th>
+        </tr>
+        {% for case in api %}
+        <tr>
+            <td class="id-column">{{ case[0] }}</td>
+            <td class="app-column">{{ case[1] }}</td>
+            <td class="module-column">{{ case[2] }}</td>
+            <td>{{ case[3] }}</td>
+            <td>{{ case[4] }}</td>
+            <td class="url-column">{{ case[5] }}</td>
+            <td>{{ case[6] }}</td>
+            <td>{{ case[7] }}</td>
+            <td>{{ case[8] }}</td>
+            <td>{{ case[9] }}</td>
+            <td class="request-column">
+                <div class="request-content" id="request-content-{{ case[0] }}">
+                    {{ case[10] }}
+                </div>
+                <span class="show-more" data-case-id="{{ case[0] }}">查看更多</span>
+            </td>
+            <td>{{ case[11] }}</td>
+            <td>{{ case[12] }}</td>
+            <td class="status-column">{{ case[13] }}</td>
+            <td>{{ case[14] }}</td>
+            <td>{{ case[15] }}</td>
+            <td>{{ case[16] }}</td>
+            <td>{{ case[17] }}</td>
+            <td>{{ case[20] }}</td>
+            <td>{{ case[21] }}</td>
+            <td class="action-column">
+                <a href="{{ url_for('api_edit', id=case[0]) }}" class="edit-btn">编辑</a>
+                <form action="{{ url_for('api_delete', id=case[0]) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="delete-btn" onclick="return confirm('确定删除该案例吗？');">删除</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="{{ url_for('api_list', page=page-1, search_app=search_app, search_title=search_title, search_pass=search_pass, search_url=search_url, search_creat=search_creat, search_module=search_module) }}">上一页</a>
+        {% endif %}
+
+        <span>第 {{ page }} 页，共 {{ total_pages }} 页</span>
+
+        {% if page < total_pages %}
+            <a href="{{ url_for('api_list', page=page+1, search_app=search_app, search_title=search_title, search_pass=search_pass, search_url=search_url, search_creat=search_creat, search_module=search_module) }}">下一页</a>
+        {% endif %}
+    </div>
+
+    <!-- 批量执行 JavaScript 逻辑 -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // 检查批量执行按钮是否存在，避免错误
+            const batchExecuteBtn = document.getElementById('batch-execute-btn');
+            if (batchExecuteBtn) {
+                batchExecuteBtn.addEventListener('click', function() {
+                    if (confirm('确定要批量执行所有测试吗？')) {
+                        fetch('/api/excute', {
+                            method: 'GET',  // 假设批量执行的接口是通过 GET 方法
+                        })
+                        .then(response => response.json())  // 假设接口返回的是 JSON
+                        .then(data => {
+                            alert('批量执行完成，结果: ' + data.message);
+                            window.location.reload();
+                        })
+                        .catch(error => {
+                            console.error('批量执行出错:', error);
+                            alert('批量执行出错，请检查控制台以了解详情。');
+                        });
+                    }
+                });
+            }
+
+            // 展开请求内容的JavaScript逻辑
+            document.querySelectorAll('.show-more').forEach(function(element) {
+                element.addEventListener('click', function() {
+                    const caseId = this.getAttribute('data-case-id');
+                    const contentDiv = document.getElementById('request-content-' + caseId);
+
+                    if (contentDiv.classList.contains('expanded')) {
+                        contentDiv.classList.remove('expanded');
+                        this.textContent = '查看更多';
+                    } else {
+                        contentDiv.classList.add('expanded');
+                        this.textContent = '收起';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

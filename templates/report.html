@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试用例统计报表</title>
+    <!-- 引入 Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- 引入 ECharts -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .chart-container {
+            margin-top: 30px;
+        }
+        .chart {
+            height: 400px;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: none;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+        .container h1 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #343a40;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .section-title {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #495057;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-5">测试用例统计报表</h1>
+
+        <!-- 图表展示 -->
+        <div class="row chart-container">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">测试用例执行情况</h5>
+                        <div id="pie_chart" class="chart"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">创建人测试用例数量</h5>
+                        <div id="bar_chart" class="chart"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h2 class="section-title">应用模块信息</h2>
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">应用模块及测试用例数量</h5>
+                <div id="module_chart" class="chart"></div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <!-- 统计信息 -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">总览</h5>
+                        <p>总测试用例数：<strong>{{ statistics.total_cases }}</strong></p>
+                        <p>总应用数量：<strong>{{ statistics.total_apps }}</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 测试用例状态 -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">测试用例状态</h5>
+                        <p>通过的：<strong>{{ statistics.passed_cases }}</strong></p>
+                        <p>待执行的：<strong>{{ statistics.pending_cases }}</strong></p>
+                        <p>失败的：<strong>{{ statistics.to_execute_cases }}</strong></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 创建人测试用例 -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">创建人测试用例数量</h5>
+                        <ul>
+                            {% for creator, count in statistics.cases_per_creator %}
+                            <li>{{ creator }}: {{ count }} 个测试用例</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入 Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- ECharts 配置 -->
+        <!-- ECharts 配置 -->
+    <script>
+        // 初始化饼状图
+        var pieChart = echarts.init(document.getElementById('pie_chart'));
+        var pieOption = {
+            title: { text: '一个小时自动更新一次', left: 'center' },
+            tooltip: { trigger: 'item' },
+            legend: {
+                bottom: '10%',
+                formatter: function (name) {
+                    var data = pieOption.series[0].data;
+                    var total = 0;
+                    var value = 0;
+                    for (var i = 0; i < data.length; i++) {
+                        total += data[i].value; // 总数
+                        if (data[i].name === name) {
+                            value = data[i].value; // 对应状态的值
+                        }
+                    }
+                    return name + '：' + value;  // 图例显示名称和数量
+                }
+            },
+            series: [
+                {
+                    name: '状态',
+                    type: 'pie',
+                    radius: '50%',
+                    data: [
+                        { value: {{ statistics.passed_cases }}, name: '通过', itemStyle: { color: '#32CD32' } },
+                        { value: {{ statistics.pending_cases }}, name: '待执行', itemStyle: { color: '#FFD700' } },
+                        { value: {{ statistics.to_execute_cases }}, name: '失败', itemStyle: { color: '#FF6347' } }
+                    ],
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        pieChart.setOption(pieOption);
+
+        // 初始化条形图
+        var barChart = echarts.init(document.getElementById('bar_chart'));
+        var barOption = {
+            title: { text: '创建人测试用例数量', left: 'center' },
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: [{% for creator, _ in statistics.cases_per_creator %}'{{ creator }}',{% endfor %}] },
+            yAxis: { type: 'value' },
+            series: [{
+                name: '测试用例数',
+                type: 'bar',
+                data: [{% for _, count in statistics.cases_per_creator %}{{ count }},{% endfor %}],
+                barWidth: '50%',
+                itemStyle: { color: '#3398DB' }
+            }]
+        };
+        barChart.setOption(barOption);
+
+        // 初始化应用模块柱状图
+        var moduleChart = echarts.init(document.getElementById('module_chart'));
+        var moduleOption = {
+            title: { text: '应用模块及测试用例数量', left: 'center' },
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: [{% for app, module, _ in statistics.modules_per_app %}'{{ app }} - {{ module }}',{% endfor %}] },
+            yAxis: { type: 'value' },
+            series: [{
+                name: '测试用例数',
+                type: 'bar',
+                data: [{% for _, _, case_count in statistics.modules_per_app %}{{ case_count }},{% endfor %}],
+                barWidth: '50%',
+                itemStyle: { color: '#73C9E5' }
+            }]
+        };
+        moduleChart.setOption(moduleOption);
+    </script>
+
+</body>
+</html>
